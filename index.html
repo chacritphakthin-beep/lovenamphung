@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBD & Happy Anniversary</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Mali:wght@400;600;700&family=Prompt:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-pink: #ffc2d1;
+            --btn-pink: #ffb3c6;
+            --text-pink: #d81159;
+            --text-red: #ff3366;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Mali', cursive;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background-color: var(--bg-pink);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 8px solid #333;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px; /* ลด padding ลงเพื่อให้จัดตำแหน่งง่ายขึ้น */
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(100%);
+            background-color: var(--bg-pink);
+            overflow-y: auto;
+        }
+
+        .screen::-webkit-scrollbar { display: none; }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateX(0);
+        }
+
+        /* ส่วนหัวและปุ่ม Back ที่แก้ไขใหม่ */
+        .top-nav {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            position: sticky; /* ติดหนึบด้านบน */
+            top: 0;
+            left: 0;
+            padding: 15px 10px;
+            z-index: 1000; /* อยู่เหนือจดหมายเสมอ */
+            background-color: var(--bg-pink); /* สีเดียวกับพื้นหลังเพื่อบังเวลาเลื่อน */
+        }
+
+        .back-btn, .next-btn {
+            background: none;
+            border: none;
+            color: var(--text-pink);
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        h1 { color: var(--text-pink); text-align: center; margin: 15px 0; font-size: 24px;}
+        h2 { color: var(--text-pink); text-align: center; margin: 10px 0; font-size: 18px;}
+        p { color: #ff4d6d; text-align: center; font-size: 14px;}
+
+        .cake-img { font-size: 100px; margin: 50px 0 20px 0; background: rgba(255,255,255,0.3); padding: 20px; border-radius: 20px;}
+        .main-btn { margin-top: 20px; margin-bottom: 20px; padding: 12px 30px; font-size: 18px; font-weight: bold; color: var(--text-pink); background-color: rgba(255,255,255,0.8); border: none; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(216, 17, 89, 0.2); }
+        .polaroid { background: white; padding: 10px 10px 30px 10px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px; font-size: 80px; text-align: center; line-height: 1; }
+        .polaroid span { display: block; font-size: 14px; color: var(--text-pink); margin-top: 10px; }
+        .passcode-box { background: rgba(255,255,255,0.8); border-radius: 30px; padding: 20px; width: 100%; }
+        .dots { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .dot { width: 15px; height: 15px; border-radius: 50%; background-color: #ffd0d9; border: 2px solid #ff8fa3; }
+        .dot.filled { background-color: var(--text-pink); }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; justify-items: center; }
+        .key { width: 60px; height: 60px; border-radius: 50%; background-color: transparent; border: 1px solid #ffb3c6; font-size: 24px; color: var(--text-pink); cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .key:active { background-color: #ffb3c6; color: white; }
+        .key.zero { grid-column: 2; }
+
+        .memory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; background: rgba(255,255,255,0.5); padding: 15px; border-radius: 20px; margin-top: 20px; margin-bottom: 20px;}
+        
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px 20px;
+            width: 100%;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.4);
+            padding: 20px;
+            border-radius: 20px;
+        }
+        .timer-box { text-align: center; }
+        .time-val { font-size: 24px; font-weight: bold; color: var(--text-red); display: block; }
+        .time-label { font-size: 12px; color: var(--text-pink); }
+
+        .instruction {
+            margin-top: 10px;
+            margin-bottom: 15px;
+            color: var(--text-red);
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 310px;
+            height: 200px;
+            cursor: pointer;
+            /* แก้บรรทัด margin ด้านล่างนี้ ดันขอบบนลงมา 100px */
+            margin: 100px auto 40px auto; 
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #f7a1a1;
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 155px solid transparent;
+            border-right: 155px solid transparent;
+            border-top: 120px solid #ff7b7b;
+            z-index: 4;
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .letter-paper {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 170px;
+            background-color: #fff9f9;
+            border-radius: 8px;
+            z-index: 3;
+            transition: all 0.8s ease-in-out;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow-y: hidden;
+        }
+
+        .letter-paper p {
+            font-family: 'Prompt', sans-serif;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            text-align: left;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out 0.4s;
+        }
+
+        .front {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 155px solid #ff8f8f;
+            border-right: 155px solid #ff8f8f;
+            border-bottom: 110px solid #fc9d9d;
+            z-index: 4;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .envelope-wrapper.open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        /* แก้ไขส่วนจดหมายตอนเปิด ให้เลื่อนอ่านข้างในได้ */
+        .envelope-wrapper.open .letter-paper {
+            height: 350px; /* จำกัดความสูงไม่ให้ทะลุจอ */
+            bottom: 40px; 
+            z-index: 5;
+            overflow-y: auto; /* เปิดให้เลื่อนอ่านข้างในกระดาษ */
+        }
+
+        .envelope-wrapper.open .letter-paper p {
+            opacity: 1;
+        }
+
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10px) translateX(0px); opacity: 0.8; }
+            100% { transform: translateY(100vh) translateX(30px); opacity: 0; }
+        }
+
+        .memory-card { aspect-ratio: 1/1; position: relative; transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; }
+        .memory-card.flip { transform: rotateY(180deg); }
+        .card-face { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .card-front { background-color: var(--white); transform: rotateY(180deg); }
+        .card-back { background-color: var(--btn-pink); color: white; }
+        .card-front img { width: 88%; height: 88%; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        
+        <div id="screen1" class="screen active">
+            <div class="cake-img">
+                <img src="cake.png" style="width: 150px; border-radius: 15px;">
+            </div>
+            <h1>🎉HBD TO NAMPHUNG</h1>
+            <p>🎀เซอร์ไพรส์อ้วนนนน🥰</p>
+            <button class="main-btn" onclick="goToScreen(2, 'forward')">กดตรงเน้อ้วนน</button>
+        </div>
+
+        <div id="screen2" class="screen">
+            <div class="top-nav">
+                <button class="back-btn" onclick="goToScreen(1, 'back')">&lt; Back</button>
+            </div>
+            <div class="polaroid" style="width: 160px; margin: 20px auto 15px auto; padding-bottom: 15px;">
+                <video src="love.mp4" autoplay loop muted playsinline style="width: 100%; border-radius: 5px; margin-bottom: 5px;"></video>
+                <span style="font-size: 14px;">รักไอ่อ้วนนนน <3</span>
+            </div>
+            <div class="passcode-box">
+                <h2>รหัสลับบบ รู้ป่าวน้ออ</h2>
+                <div class="dots" id="dots-container">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                </div>
+                <div class="keypad">
+                    <button class="key" onclick="pressKey(1)">1</button>
+                    <button class="key" onclick="pressKey(2)">2</button>
+                    <button class="key" onclick="pressKey(3)">3</button>
+                    <button class="key" onclick="pressKey(4)">4</button>
+                    <button class="key" onclick="pressKey(5)">5</button>
+                    <button class="key" onclick="pressKey(6)">6</button>
+                    <button class="key" onclick="pressKey(7)">7</button>
+                    <button class="key" onclick="pressKey(8)">8</button>
+                    <button class="key" onclick="pressKey(9)">9</button>
+                    <button class="key zero" onclick="pressKey(0)">0</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen3" class="screen">
+            <div class="top-nav">
+                <button class="back-btn" onclick="goToScreen(2, 'back')">&lt; Back</button>
+                <button class="next-btn" id="next-btn-sc3" style="display: none;" onclick="goToScreen(4, 'forward')">Next &gt;</button>
+            </div>
+            <h1>Match the pic ิิ</h1>
+            <p>เกมเน้้ จับคู่รูปสิ้อ้วนน</p>
+            <div class="memory-grid" id="memory-game"></div>
+            <button class="main-btn" id="win-btn" style="display: none;" onclick="goToScreen(4, 'forward')">กว่าจะได้น่ะ ไอ่อ้วนนขี้ลืมม!! &gt;</button>
+        </div>
+
+        <div id="screen4" class="screen">
+            <div class="top-nav">
+                <button class="back-btn" onclick="goToScreen(3, 'back')">&lt; Back</button>
+                <button class="next-btn" onclick="goToScreen(5, 'forward')">Next &gt;</button>
+            </div>
+            <h1>นี่เธอรู้มั้ยย</h1>
+            <p>เราเป็นแฟนกันนานแค่ไหนแล้ว</p>
+            <div style="width: 160px; height: 160px; margin: 20px auto;">
+                <video src="vdo4.mp4" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"></video>
+            </div>
+            <div class="timer-grid">
+                <div class="timer-box"><span class="time-val" id="t-years">00</span><span class="time-label">Years</span></div>
+                <div class="timer-box"><span class="time-val" id="t-months">00</span><span class="time-label">Months</span></div>
+                <div class="timer-box"><span class="time-val" id="t-days">00</span><span class="time-label">Days</span></div>
+                <div class="timer-box"><span class="time-val" id="t-hours">00</span><span class="time-label">Hours</span></div>
+                <div class="timer-box"><span class="time-val" id="t-mins">00</span><span class="time-label">Minutes</span></div>
+                <div class="timer-box"><span class="time-val" id="t-secs">00</span><span class="time-label">Seconds</span></div>
+            </div>
+            <p style="margin-top: 20px; font-weight: bold;">❤️เวลา 12:26 นาที 18/12/2025</p>
+        </div>
+
+        <div id="screen5" class="screen">
+            <div class="top-nav">
+                <button class="back-btn" onclick="goToScreen(4, 'back')">&lt; Back</button>
+                <button class="next-btn" onclick="goToScreen(6, 'forward')">Next &gt;</button>
+            </div>
+            <h1>โมเม้นน่ารักกๆๆ เค้ายังนึกถึงตลอด</h1>
+            <div style="width: 75%; aspect-ratio: 9/16; margin: 20px auto;">
+                <video src="vdo5.mp4" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);"></video>
+            </div>
+        </div>
+
+        <div id="screen6" class="screen">
+            <div class="top-nav">
+                <button class="back-btn" onclick="goToScreen(5, 'back')">&lt; Back</button>
+            </div>
+
+            <h1 style="margin-top: 20px; font-family: 'Dancing Script', cursive; font-size: 32px;">To... Namphung</h1>
+            <div class="instruction" id="click-text"> จดหมายค้าบบอ้วนน</div>
+
+            <div class="envelope-wrapper" id="envelope-wrapper">
+                <div class="envelope"></div>
+                <div class="flap"></div>
+                <div class="front"></div>
+                <div class="letter-paper" id="letter-paper">
+                    <p>สุขสันต์วันวันเกิดน้าาาอ้วนนน 🎂 วันเกิดเธอถึงเค้าจะไม่ได้อยู่ด้วยในวันนี้ ด้วยเหตุผลต่างๆ แต่ก็.. อยากจะขอให้เธอมีความสุขมากๆน้า ให้สมปารถนาทุกสิ่ง เค้าจะคอยซัพพอร์ทเธอเสมอ สิ่งร้ายๆสิ่งไม่ดีให้ออกไปจากเธอน้าา</p>
+                    <p>ตลอดเวลาเกือบ 1 ปีที่ผ่านมาถึงจะมีทะเลาะกันบ้าง ไม่เข้าใจกันบ้าง แต่ก็ทำให้เราได้เรียนรู้ ได้เข้าใจกันมากขึ้น ยิ่งทำให้เค้ามั่นใจว่าต่อให้ทะเลาะกันยังไง เราก็ยังคุยกันได้เสมอ ไม่มีทางหายไปไหนแน่ๆ ขอบคุณที่เข้าใจกัน น่ารักกับเค้ามาตลอด เป็นแฟนที่น่ารักมากๆ</p>
+                    <p>เธอจะชอบคิดไปว่าเค้าจะเบื่อเธอๆๆ เค้าจะบอกว่า ไม่เคยเบื่อเธอเลย เค้ายังรักเธอเหมือนเดิม ต่อให้เธอจะเหวี่ยงวีนบ้างงอนบ้าง แต่เค้าก็รักเธอเหมือนเดิม เค้ารู้สึกว่ามันรักไปแล้วมันกู่ไม่กลับแล้ว เลือกเธอแล้วเค้าเลือกเลย ไม่เปลี่ยนใจ ตั้งแต่มีเธอ เค้าไม่เคยสนใจใครเลยไม่ว่าจะต่อหน้าหรือลับหลัง เค้ามีแค่เธอมาตลอด</p>
+                    <p>วันนี้เค้าไม่ได้อยู่กับเธออ่าาา ฮือออออ อยากกอดไออ้วนนอ่าาาา 🥺 วันนี้หลายๆอย่างจะยังไม่พร้อมให้เราได้อยู่ด้วยกัน แต่เค้าก็จะพยายามอย่างที่สุดแน่นอน วันที่เราได้อยู่ด้วยกันมันจะมาถึงในอีกไม่กี่ปีข้างหน้านี้เองง เค้ากำลังสร้างอนาคตให้เธออยู่ เค้าไม่อยากให้เธอน้อยหน้าใคร ไม่อยากให้เธอลำบากมันเป็นความรู้สึกในใจลึกๆของเค้าเอง</p>
+                    <p>พอมาพิมพ์แบบนี้มันสามารถกลั่นกรองความในใจเค้าได้ดีมากเลย เพราะเค้าพูดไม่เก่ง เวลาพูดจะนึกคำไม่ทัน ทำให้บางทีก็พูดอะไรไม่ดีออกไปเค้าไม่เคยมีเจตนาไม่ดีเลย</p>
+                    <p>ละตอนนี้พิมพ์เยอะไปละ เอาเป็นว่าขอบคุณที่เธอรอเค้าน้าา เค้าจะไม่ทำให้ผิดหวัง จะไม่ให้เธอรู้สึกว่าเลือกผิดคน เค้าจะทำให้เต็มที่ ระหว่างนี้ก็ขอให้เธอ ดูแลตัวเองดีๆ เค้ายังดูแลเธอไม่ได้ดีมากเท่าไหร่ อยากให้เธอใช้เงินระวังๆ ไม่อยากให้เธอเดือดร้อน จะคิดจะทำอะไรก็ให้ระมัดระวังด้วย</p>
+                    <p>สุดท้ายขอให้เราต่างคนต่างรักกันแบบนี้ไปนานๆ รักกันจนมีเด็กน้อยหน้าตาเหมือนเราผสมกัน วิ่งเล่นหน้าบ้านของเราเลยน้าา 🏡👨‍👩‍👧</p>
+                    <p style="text-align: center; font-weight: bold; color: #e63946;">เค้ารักเธอมากๆๆๆๆๆๆน้าอ้วนน ❤️</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function goToScreen(targetScreenNum, direction) {
+            const currentActive = document.querySelector('.screen.active');
+            const targetScreen = document.getElementById('screen' + targetScreenNum);
+
+            if(currentActive) {
+                currentActive.classList.remove('active');
+                if(direction === 'forward') {
+                    currentActive.classList.add('fade-out');
+                    targetScreen.classList.remove('fade-out', 'fade-out-back');
+                    targetScreen.style.transform = "translateX(100%)";
+                } else {
+                    currentActive.classList.add('fade-out-back');
+                    targetScreen.classList.remove('fade-out', 'fade-out-back');
+                    targetScreen.style.transform = "translateX(-100%)";
+                }
+            }
+            setTimeout(() => {
+                targetScreen.classList.add('active');
+                targetScreen.style.transform = "translateX(0)";
+                targetScreen.scrollTop = 0;
+            }, 50);
+        }
+
+        let currentPasscode = "";
+        const correctPasscode = "1812";
+
+        function pressKey(num) {
+            if (currentPasscode.length < 4) {
+                currentPasscode += num;
+                updateDots();
+            }
+            if (currentPasscode.length === 4) {
+                setTimeout(() => {
+                    if (currentPasscode === correctPasscode) {
+                        goToScreen(3, 'forward'); 
+                    } else {
+                        alert("นึกดีๆอ้วนนน 🥺");
+                        currentPasscode = "";
+                        updateDots();
+                    }
+                }, 300);
+            }
+        }
+
+        function updateDots() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if (index < currentPasscode.length) dot.classList.add('filled');
+                else dot.classList.remove('filled');
+            });
+        }
+
+        const startDate = new Date("2024-12-18T12:26:00"); 
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+            const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const years = Math.floor(totalDays / 365);
+            const remainingDays = totalDays % 365;
+            const months = Math.floor(remainingDays / 30.44);
+            const days = Math.floor(remainingDays % 30.44);
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            const formatTime = (time) => time < 10 ? `0${time}` : time;
+
+            document.getElementById('t-years').innerText = formatTime(years);
+            document.getElementById('t-months').innerText = formatTime(months);
+            document.getElementById('t-days').innerText = formatTime(days);
+            document.getElementById('t-hours').innerText = formatTime(hours);
+            document.getElementById('t-mins').innerText = formatTime(minutes);
+            document.getElementById('t-secs').innerText = formatTime(seconds);
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            const size = Math.random() * 4 + 2; 
+            snowflake.style.width = size + 'px';
+            snowflake.style.height = size + 'px';
+            snowflake.style.left = Math.random() * 375 + 'px';
+            const duration = Math.random() * 4 + 3;
+            snowflake.style.animationDuration = duration + 's';
+            document.querySelector('.phone-container').appendChild(snowflake);
+            setTimeout(() => { snowflake.remove(); }, duration * 1000);
+        }
+        setInterval(createSnowflake, 300);
+
+        const gameGrid = document.getElementById('memory-game');
+        const items = ['mem1.jpg', 'mem2.jpg', 'mem3.jpg', 'mem4.jpg', 'mem5.jpg', 'mem6.jpg']; 
+        let cardsArray = [...items, ...items];
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+        let matchedPairs = 0;
+
+        cardsArray.sort(() => 0.5 - Math.random());
+        cardsArray.forEach(item => {
+            const card = document.createElement('div');
+            card.classList.add('memory-card');
+            card.dataset.name = item;
+            card.innerHTML = `
+                <div class="card-face card-front" style="background-color: white;">
+                    <img src="${item}">
+                </div>
+                <div class="card-face card-back">💖</div>
+            `;
+            card.addEventListener('click', flipCard);
+            gameGrid.appendChild(card);
+        });
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+            this.classList.add('flip');
+            if (!hasFlippedCard) {
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+            secondCard = this;
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.name === secondCard.dataset.name;
+            if (isMatch) {
+                disableCards();
+                matchedPairs++;
+                if (matchedPairs === 6) {
+                    setTimeout(() => {
+                        document.getElementById('next-btn-sc3').style.display = 'block';
+                        document.getElementById('win-btn').style.display = 'block';
+                    }, 500);
+                }
+            } else {
+                unflipCards();
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+            setTimeout(() => {
+                if(firstCard) firstCard.classList.remove('flip');
+                if(secondCard) secondCard.classList.remove('flip');
+                resetBoard();
+            }, 1000); 
+        }
+
+        function resetBoard() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+
+        const envelope = document.getElementById('envelope-wrapper');
+        const clickText = document.getElementById('click-text');
+        envelope.addEventListener('click', () => {
+            envelope.classList.toggle('open');
+            if(envelope.classList.contains('open')) {
+                clickText.style.opacity = '0';
+            } else {
+                clickText.style.opacity = '1';
+            }
+        });
+    </script>
+</body>
+</html>
