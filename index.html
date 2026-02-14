@@ -250,7 +250,10 @@
     </style>
 </head>
 <body>
-
+    <body>
+        <audio id="bgMusic" src="song.mp3" loop></audio>
+    
+        <div class="phone-container">
     <div class="phone-container">
         
         <div id="screen1" class="screen active">
@@ -259,7 +262,7 @@
             </div>
             <h1>🎉HBD TO NAMPHUNG</h1>
             <p>🎀เซอร์ไพรส์อ้วนนนน🥰</p>
-            <button class="main-btn" onclick="goToScreen(2, 'forward')">กดตรงเน้อ้วนน</button>
+            <button class="main-btn" onclick="document.getElementById('bgMusic').play(); goToScreen(2, 'forward')">กดตรงเน้อ้วนน</button>
         </div>
 
         <div id="screen2" class="screen">
